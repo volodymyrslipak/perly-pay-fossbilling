@@ -75,7 +75,8 @@ for the gateway's mode, or a live key in a test field, stops it there.
 - Refunds: FOSSBilling has no refund hook for payment gateways, so refunds
   are opened in Perly Pay (Payments → the payment → Refund). Perly Pay
   emails your client for an address; you send from your wallet. The refund
-  events are noted on FOSSBilling's transactions.
+  events are noted on FOSSBilling's transactions, from the refund as Perly
+  Pay's API returns it, never from the webhook.
 
 The adapter keeps one table, `perlypay_invoice` (which Perly Pay invoice
 belongs to which FOSSBilling invoice), made on first use.
@@ -112,6 +113,9 @@ Mode** off, then pay one small real invoice and refund it in Perly Pay.
   timestamp and the raw body, compared in constant time), at most five
   minutes old when FOSSBilling received it, signed by the secret of the mode
   it claims, and only for Perly Pay invoices this gateway made.
+- Refund details (status, amount, address, transaction) are also confirmed
+  with Perly Pay's API, never taken from the webhook: a signed event cannot
+  put another address in a note.
 - The keys and secrets are password fields FOSSBilling masks in its admin
   and API (from FOSSBilling 0.8.7). The adapter never writes a key, a
   secret, a signature or a client's email to a note or a log.
@@ -129,3 +133,8 @@ Mode** off, then pay one small real invoice and refund it in Perly Pay.
 MIT. Perly Pay's PHP SDK inside (`vendor/perly-pay-sdk`) is MIT too.
 FOSSBilling itself is Apache-2.0; this adapter uses its documented adapter
 interface and ships none of its code.
+
+## Changelog
+
+- **1.0.1**: Every payment is confirmed with Perly Pay's API before an order is completed: a signed webhook alone no longer marks an order paid, so a leaked signing secret cannot ship an unpaid order. Refund details are also confirmed with Perly Pay's API, never taken from the webhook, so a leaked signing secret cannot put its own address in a refund note.
+- **1.0.0**: First release.

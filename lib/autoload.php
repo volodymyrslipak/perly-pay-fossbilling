@@ -16,7 +16,7 @@ if (!defined('PATH_LIBRARY')) {
 }
 
 if (!defined('PERLYPAY_FOSSBILLING_VERSION')) {
-    define('PERLYPAY_FOSSBILLING_VERSION', '1.0.0');
+    define('PERLYPAY_FOSSBILLING_VERSION', '1.0.1');
 
     spl_autoload_register(static function (string $class): void {
         $roots = [
